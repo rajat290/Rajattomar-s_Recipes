@@ -1,0 +1,110 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Open+Sans:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 30 30% 99%;
+    --foreground: 20 14.3% 4.1%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 20 14.3% 4.1%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14.3% 4.1%;
+
+    --primary: 24 9.8% 10%;
+    --primary-foreground: 60 9.1% 97.8%;
+
+    --secondary: 60 4.8% 95.9%;
+    --secondary-foreground: 24 9.8% 10%;
+
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 25 5.3% 44.7%;
+
+    --accent: 60 4.8% 95.9%;
+    --accent-foreground: 24 9.8% 10%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 60 9.1% 97.8%;
+
+    --border: 20 5.9% 90%;
+    --input: 20 5.9% 90%;
+    --ring: 24 5.4% 63.9%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-food-beige text-food-dark-gray font-body;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-semibold;
+  }
+
+  a {
+    @apply transition-colors duration-200;
+  }
+
+  img {
+    @apply transition-all duration-500;
+  }
+}
+
+@layer components {
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-md;
+  }
+
+  .nav-link {
+    @apply relative inline-block text-food-dark-gray pb-1 transition-all duration-200;
+  }
+
+  .nav-link::after {
+    @apply content-[''] absolute w-0 h-0.5 bg-food-green left-0 bottom-0 transition-all duration-300 ease-in-out;
+  }
+
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  .btn {
+    @apply px-6 py-3 rounded transition-all duration-300 inline-block;
+  }
+
+  .btn-primary {
+    @apply bg-food-green text-white hover:bg-food-light-green;
+  }
+
+  .btn-outline {
+    @apply border border-food-green text-food-green hover:bg-food-green hover:text-white;
+  }
+
+  .recipe-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8;
+  }
+
+  .page-transition {
+    @apply animate-fade-in;
+  }
+
+  .image-lazy-load {
+    @apply opacity-0 filter blur-sm transition-all duration-500;
+  }
+
+  .image-lazy-loaded {
+    @apply opacity-100 filter blur-0;
+  }
+}
