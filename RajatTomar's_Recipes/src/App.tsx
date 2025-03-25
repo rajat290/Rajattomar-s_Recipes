@@ -17,6 +17,7 @@ import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
 import UserPreferences from "./pages/UserPreferences";
 import ExternalRecipe from "./pages/ExternalRecipe";
+import Recipes from "./pages/Recipes"; // Import the new Recipes page
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/recipe/:id" element={<Recipe />} />
+            <Route path="/recipes" element={<Recipes />} />
             <Route path="/category/:id" element={<Category />} />
             <Route path="/about" element={<About />} />
             <Route path="/search" element={<Search />} />
