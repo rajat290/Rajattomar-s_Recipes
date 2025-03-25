@@ -35,3 +35,27 @@ export const getRandomRecipes = async (tags?: string) => {
     throw error;
   }
 };
+
+
+// New functions for the recipes page
+export const getAllRecipes = async (page: number = 1) => {
+  try {
+    const token = getToken();
+    const data = await mockAPI.recipes.getAll(page, token || undefined);
+    return data;
+  } catch (error) {
+    console.error('Error fetching all recipes:', error);
+    throw error;
+  }
+};
+
+export const getRecipesByCategory = async (category: string, page: number = 1) => {
+  try {
+    const token = getToken();
+    const data = await mockAPI.recipes.getByCategory(category, page, token || undefined);
+    return data;
+  } catch (error) {
+    console.error('Error fetching recipes by category:', error);
+    throw error;
+  }
+};
