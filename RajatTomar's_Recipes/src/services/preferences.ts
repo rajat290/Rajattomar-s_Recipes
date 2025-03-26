@@ -1,5 +1,5 @@
 
-import { mockAPI } from './mockBackend';
+import { mockPreferencesAPI } from './mockBackend';
 import { getToken } from './auth';
 
 // Types
@@ -18,7 +18,7 @@ export const getUserPreferences = async (userId: string): Promise<UserPreference
   if (!token) return null;
   
   try {
-    return await mockAPI.preferences.get(userId, token);
+    return await mockPreferencesAPI.get(userId, token);
   } catch (error) {
     console.error('Error getting user preferences:', error);
     return null;
@@ -30,7 +30,7 @@ export const saveUserPreferences = async (preferences: Omit<UserPreferences, 'id
   const token = getToken();
   if (!token) throw new Error('Authentication required');
   
-  return await mockAPI.preferences.save(preferences, token);
+  return await mockPreferencesAPI.save(preferences, token);
 };
 
 // Add favorite recipe
@@ -38,7 +38,7 @@ export const addFavoriteRecipe = async (userId: string, recipeId: number): Promi
   const token = getToken();
   if (!token) throw new Error('Authentication required');
   
-  return await mockAPI.preferences.addFavorite(userId, recipeId, token);
+  return await mockPreferencesAPI.addFavorite(userId, recipeId, token);
 };
 
 // Remove favorite recipe
@@ -46,7 +46,7 @@ export const removeFavoriteRecipe = async (userId: string, recipeId: number): Pr
   const token = getToken();
   if (!token) throw new Error('Authentication required');
   
-  return await mockAPI.preferences.removeFavorite(userId, recipeId, token);
+  return await mockPreferencesAPI.removeFavorite(userId, recipeId, token);
 };
 
 // Add saved recipe
@@ -54,7 +54,7 @@ export const addSavedRecipe = async (userId: string, recipeId: number): Promise<
   const token = getToken();
   if (!token) throw new Error('Authentication required');
   
-  return await mockAPI.preferences.addSaved(userId, recipeId, token);
+  return await mockPreferencesAPI.addSaved(userId, recipeId, token);
 };
 
 // Remove saved recipe
@@ -62,5 +62,5 @@ export const removeSavedRecipe = async (userId: string, recipeId: number): Promi
   const token = getToken();
   if (!token) throw new Error('Authentication required');
   
-  return await mockAPI.preferences.removeSaved(userId, recipeId, token);
+  return await mockPreferencesAPI.removeSaved(userId, recipeId, token);
 };
