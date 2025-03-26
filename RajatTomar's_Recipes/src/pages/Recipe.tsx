@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Clock, Users, Printer, Bookmark, BookmarkCheck, Heart, Share2 } from 'lucide-react';
@@ -22,10 +21,14 @@ const Recipe = () => {
   const [recipe, setRecipe] = useState(recipes.find(r => r.id === id));
   const [relatedRecipes, setRelatedRecipes] = useState(getRelatedRecipes(id || ''));
   const [isLoaded, setIsLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   const [isSaved, setIsSaved] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+
+  // Fallback image when the original image fails to load
+  const fallbackImage = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
 
   // Load user preferences when component mounts or user changes
   useEffect(() => {
@@ -54,6 +57,9 @@ const Recipe = () => {
     // Scroll to top on page load
     window.scrollTo(0, 0);
     
+    // Reset image error state when recipe changes
+    setImageError(false);
+    
     // Update recipe when ID changes
     setRecipe(recipes.find(r => r.id === id));
     setRelatedRecipes(getRelatedRecipes(id || ''));
@@ -65,6 +71,10 @@ const Recipe = () => {
     
     return () => clearTimeout(timer);
   }, [id]);
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
 
   const handlePrint = () => {
     window.print();
@@ -274,9 +284,10 @@ const Recipe = () => {
           }`}>
             <div className="aspect-[16/9] rounded-lg overflow-hidden">
               <img 
-                src={recipe.image} 
+                src={imageError ? fallbackImage : recipe.image} 
                 alt={recipe.title} 
                 className="w-full h-full object-cover animate-image-fade"
+                onError={handleImageError}
               />
             </div>
           </div>

@@ -1,3 +1,5 @@
+
+
 import { Link } from 'react-router-dom';
 import { Instagram, Facebook, Twitter, BookOpen } from 'lucide-react';
 
@@ -12,16 +14,16 @@ const Footer = () => {
               Pinch of Yum is a food blog with simple, tasty, and (mostly) healthy recipes.
             </p>
             <div className="flex space-x-4">
-              <a href="https://instagram.com" className="text-food-medium-gray hover:text-food-green transition-colors">
+              <a href="#" className="text-food-medium-gray hover:text-food-green transition-colors" aria-label="Instagram">
                 <Instagram size={20} />
               </a>
-              <a href="https://facebook.com" className="text-food-medium-gray hover:text-food-green transition-colors">
+              <a href="#" className="text-food-medium-gray hover:text-food-green transition-colors" aria-label="Facebook">
                 <Facebook size={20} />
               </a>
-              <a href="https://pinterest.com" className="text-food-medium-gray hover:text-food-green transition-colors">
+              <a href="#" className="text-food-medium-gray hover:text-food-green transition-colors" aria-label="Recipe Book">
                 <BookOpen size={20} />
               </a>
-              <a href="https://twitter.com" className="text-food-medium-gray hover:text-food-green transition-colors">
+              <a href="#" className="text-food-medium-gray hover:text-food-green transition-colors" aria-label="Twitter">
                 <Twitter size={20} />
               </a>
             </div>
@@ -64,9 +66,9 @@ const Footer = () => {
         <div className="border-t border-gray-200 pt-8 text-center text-food-medium-gray">
           <p className="mb-2">© {new Date().getFullYear()} Pinch of Yum. All rights reserved.</p>
           <div className="flex justify-center space-x-6 text-sm">
-            <Link to="/privacy" className="hover:text-food-green">Privacy Policy</Link>
-            <Link to="/terms" className="hover:text-food-green">Terms of Use</Link>
-            <Link to="/contact" className="hover:text-food-green">Contact</Link>
+            <Link to="/about#privacy" className="hover:text-food-green">Privacy Policy</Link>
+            <Link to="/about#terms" className="hover:text-food-green">Terms of Use</Link>
+            <Link to="/about#contact" className="hover:text-food-green">Contact</Link>
           </div>
         </div>
       </div>

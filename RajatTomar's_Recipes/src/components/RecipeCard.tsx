@@ -14,6 +14,7 @@ interface RecipeCardProps {
 const RecipeCard = ({ id, title, image, category, prepTime, delay = 0 }: RecipeCardProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,6 +46,14 @@ const RecipeCard = ({ id, title, image, category, prepTime, delay = 0 }: RecipeC
     setImageLoaded(true);
   };
 
+  const handleImageError = () => {
+    setImageError(true);
+    setImageLoaded(true); // Consider the image "loaded" even if it's an error
+  };
+
+  // Fallback image when the original image fails to load
+  const fallbackImage = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+
   return (
     <div 
       ref={cardRef} 
@@ -55,12 +64,13 @@ const RecipeCard = ({ id, title, image, category, prepTime, delay = 0 }: RecipeC
       <Link to={`/recipe/${id}`} className="block">
         <div className="relative overflow-hidden aspect-[4/3]">
           <img
-            src={image}
+            src={imageError ? fallbackImage : image}
             alt={title}
             className={`w-full h-full object-cover transition-all duration-700 ${
               imageLoaded ? 'scale-100 filter-none' : 'scale-105 blur-sm'
             }`}
             onLoad={handleImageLoad}
+            onError={handleImageError}
           />
           <div className="absolute top-4 left-4">
             <span className="bg-white px-3 py-1 text-xs uppercase tracking-wider font-medium text-food-dark-gray">
