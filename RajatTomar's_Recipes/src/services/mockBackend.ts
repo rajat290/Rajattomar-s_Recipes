@@ -1,72 +1,144 @@
+
 import { recipes } from '@/lib/data';
 
 // Mock API for authentication
 export const mockAuthAPI = {
-  login: async (credentials: any) => {
+  login: async (email: string, password: string) => {
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    if (credentials.email === 'test@example.com' && credentials.password === 'password') {
+    if (email === 'test@example.com' && password === 'password') {
       const userData = {
-        id: 1,
+        id: '1',
         name: 'Test User',
         email: 'test@example.com',
       };
-      localStorage.setItem('user', JSON.stringify(userData));
-      return userData;
+      
+      const token = btoa(JSON.stringify({
+        ...userData,
+        exp: Date.now() + 1000 * 60 * 60 * 24 // 24 hours
+      }));
+      
+      return { user: userData, token };
     } else {
       throw new Error('Invalid credentials');
     }
   },
 
-  register: async (userData: any) => {
+  register: async (name: string, email: string, password: string) => {
     await new Promise(resolve => setTimeout(resolve, 500));
-    localStorage.setItem('user', JSON.stringify(userData));
-    return userData;
-  },
-
-  logout: async () => {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    localStorage.removeItem('user');
-  },
-
-  getUser: async () => {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+    
+    const userData = {
+      id: '2', // New user ID
+      name,
+      email,
+    };
+    
+    const token = btoa(JSON.stringify({
+      ...userData,
+      exp: Date.now() + 1000 * 60 * 60 * 24 // 24 hours
+    }));
+    
+    return { user: userData, token };
   },
 };
 
 // Mock API for recipe preferences
 export const mockPreferencesAPI = {
-  getPreferences: async (userId: number) => {
+  get: async (userId: string, token?: string) => {
     await new Promise(resolve => setTimeout(resolve, 500));
     const preferences = localStorage.getItem(`preferences-${userId}`);
-    return preferences ? JSON.parse(preferences) : { savedRecipes: [], favoriteRecipes: [] };
+    
+    if (preferences) {
+      return JSON.parse(preferences);
+    } else {
+      // Create default preferences if none exist
+      const defaultPreferences = {
+        id: `pref-${userId}`,
+        userId,
+        dietaryPreferences: [],
+        favoriteRecipes: [],
+        savedRecipes: [],
+        allergies: []
+      };
+      
+      localStorage.setItem(`preferences-${userId}`, JSON.stringify(defaultPreferences));
+      return defaultPreferences;
+    }
   },
-
-  updatePreferences: async (userId: number, preferences: any) => {
+  
+  save: async (preferences: any, token?: string) => {
     await new Promise(resolve => setTimeout(resolve, 500));
-    localStorage.setItem(`preferences-${userId}`, JSON.stringify(preferences));
+    localStorage.setItem(`preferences-${preferences.userId}`, JSON.stringify(preferences));
     return preferences;
   },
-};
-
-// Mock API for Spoonacular external recipe fetching
-export const mockSpoonacularAPI = {
-  getRecipeById: async (id: number, token?: string) => {
+  
+  addFavorite: async (userId: string, recipeId: number, token?: string) => {
     await new Promise(resolve => setTimeout(resolve, 500));
-
-    const mockRecipe = {
-      id: id,
-      title: `External Recipe ${id}`,
-      image: `https://spoonacular.com/recipeImages/${id}-556x370.jpg`,
-      sourceUrl: `https://spoonacular.com/${id}`,
-      summary: 'This is a mock external recipe from Spoonacular.',
-      instructions: 'Follow the instructions on the Spoonacular website.',
+    
+    const prefsStr = localStorage.getItem(`preferences-${userId}`);
+    const prefs = prefsStr ? JSON.parse(prefsStr) : {
+      id: `pref-${userId}`,
+      userId,
+      dietaryPreferences: [],
+      favoriteRecipes: [],
+      savedRecipes: [],
+      allergies: []
     };
-
-    return mockRecipe;
+    
+    if (!prefs.favoriteRecipes.includes(recipeId)) {
+      prefs.favoriteRecipes.push(recipeId);
+      localStorage.setItem(`preferences-${userId}`, JSON.stringify(prefs));
+    }
+    
+    return prefs;
   },
+  
+  removeFavorite: async (userId: string, recipeId: number, token?: string) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const prefsStr = localStorage.getItem(`preferences-${userId}`);
+    if (!prefsStr) return null;
+    
+    const prefs = JSON.parse(prefsStr);
+    prefs.favoriteRecipes = prefs.favoriteRecipes.filter((id: number) => id !== recipeId);
+    localStorage.setItem(`preferences-${userId}`, JSON.stringify(prefs));
+    
+    return prefs;
+  },
+  
+  addSaved: async (userId: string, recipeId: number, token?: string) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const prefsStr = localStorage.getItem(`preferences-${userId}`);
+    const prefs = prefsStr ? JSON.parse(prefsStr) : {
+      id: `pref-${userId}`,
+      userId,
+      dietaryPreferences: [],
+      favoriteRecipes: [],
+      savedRecipes: [],
+      allergies: []
+    };
+    
+    if (!prefs.savedRecipes.includes(recipeId)) {
+      prefs.savedRecipes.push(recipeId);
+      localStorage.setItem(`preferences-${userId}`, JSON.stringify(prefs));
+    }
+    
+    return prefs;
+  },
+  
+  removeSaved: async (userId: string, recipeId: number, token?: string) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    const prefsStr = localStorage.getItem(`preferences-${userId}`);
+    if (!prefsStr) return null;
+    
+    const prefs = JSON.parse(prefsStr);
+    prefs.savedRecipes = prefs.savedRecipes.filter((id: number) => id !== recipeId);
+    localStorage.setItem(`preferences-${userId}`, JSON.stringify(prefs));
+    
+    return prefs;
+  }
 };
 
 // Helper function for paginating recipes
@@ -81,6 +153,56 @@ const paginateRecipesResult = (recipes: any[], page: number, perPage: number = 6
     totalPages,
     currentPage: page
   };
+};
+
+// Mock API for Spoonacular external recipe fetching
+export const mockSpoonacularAPI = {
+  getRecipeById: async (id: number, token?: string) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Create a richer mock external recipe with additional properties
+    const mockRecipe = {
+      id: id,
+      title: `External Recipe ${id}`,
+      image: `https://spoonacular.com/recipeImages/${id}-556x370.jpg`,
+      sourceUrl: `https://spoonacular.com/${id}`,
+      summary: 'This is a mock external recipe from Spoonacular.',
+      instructions: 'Follow the instructions on the Spoonacular website.',
+      readyInMinutes: 30 + Math.floor(Math.random() * 30), // 30-60 minutes
+      servings: 2 + Math.floor(Math.random() * 4), // 2-6 servings
+      diets: ['vegetarian', 'gluten-free'],
+      extendedIngredients: [
+        { original: '1 cup flour' },
+        { original: '2 eggs' },
+        { original: '1/2 cup milk' },
+        { original: '1 tsp baking powder' }
+      ],
+      analyzedInstructions: [
+        {
+          name: '',
+          steps: [
+            {
+              number: 1,
+              step: 'Mix all dry ingredients in a bowl.',
+              ingredients: [{ id: 20081, name: 'flour' }, { id: 18371, name: 'baking powder' }]
+            },
+            {
+              number: 2,
+              step: 'Add wet ingredients and mix until smooth.',
+              ingredients: [{ id: 1123, name: 'eggs' }, { id: 1077, name: 'milk' }]
+            },
+            {
+              number: 3,
+              step: 'Cook on a hot pan until golden brown.',
+              ingredients: []
+            }
+          ]
+        }
+      ]
+    };
+
+    return mockRecipe;
+  },
 };
 
 // Mock API for recipes
@@ -106,8 +228,33 @@ export const mockAPI = {
 
   getById: async (id: number, token?: string) => {
     await new Promise(resolve => setTimeout(resolve, 500));
-    const recipe = recipes.find(recipe => recipe.id === id.toString());
-    return recipe || null;
+    
+    // Try to find by string ID first
+    let recipe = recipes.find(recipe => recipe.id === id.toString());
+    
+    // If not found, use the mock external recipe API
+    if (!recipe) {
+      return mockSpoonacularAPI.getRecipeById(id, token);
+    }
+    
+    // Add extra properties to match the external recipe format
+    return {
+      ...recipe,
+      readyInMinutes: 30,
+      servings: 4,
+      diets: recipe.tags,
+      extendedIngredients: recipe.ingredients.map(ing => ({ original: ing })),
+      analyzedInstructions: [
+        {
+          name: '',
+          steps: recipe.instructions.map((instruction, index) => ({
+            number: index + 1,
+            step: instruction,
+            ingredients: []
+          }))
+        }
+      ]
+    };
   },
 
   getRandom: async (tags?: string, token?: string) => {
@@ -125,7 +272,16 @@ export const mockAPI = {
     const randomRecipes = [];
     for (let i = 0; i < 3; i++) {
       const randomIndex = Math.floor(Math.random() * filteredRecipes.length);
-      randomRecipes.push(filteredRecipes[randomIndex]);
+      const recipe = filteredRecipes[randomIndex];
+      
+      // Add extra properties to match the external recipe format
+      randomRecipes.push({
+        ...recipe,
+        readyInMinutes: 30,
+        servings: 4,
+        diets: recipe.tags,
+        extendedIngredients: recipe.ingredients.map(ing => ({ original: ing }))
+      });
     }
 
     return randomRecipes;

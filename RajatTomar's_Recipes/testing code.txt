@@ -1,0 +1,155 @@
+import { recipes } from '@/lib/data';
+
+// Mock API for authentication
+export const mockAuthAPI = {
+  login: async (credentials: any) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    if (credentials.email === 'test@example.com' && credentials.password === 'password') {
+      const userData = {
+        id: 1,
+        name: 'Test User',
+        email: 'test@example.com',
+      };
+      localStorage.setItem('user', JSON.stringify(userData));
+      return userData;
+    } else {
+      throw new Error('Invalid credentials');
+    }
+  },
+
+  register: async (userData: any) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    localStorage.setItem('user', JSON.stringify(userData));
+    return userData;
+  },
+
+  logout: async () => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    localStorage.removeItem('user');
+  },
+
+  getUser: async () => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  },
+};
+
+// Mock API for recipe preferences
+export const mockPreferencesAPI = {
+  getPreferences: async (userId: number) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const preferences = localStorage.getItem(`preferences-${userId}`);
+    return preferences ? JSON.parse(preferences) : { savedRecipes: [], favoriteRecipes: [] };
+  },
+
+  updatePreferences: async (userId: number, preferences: any) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    localStorage.setItem(`preferences-${userId}`, JSON.stringify(preferences));
+    return preferences;
+  },
+};
+
+// Mock API for Spoonacular external recipe fetching
+export const mockSpoonacularAPI = {
+  getRecipeById: async (id: number, token?: string) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    const mockRecipe = {
+      id: id,
+      title: `External Recipe ${id}`,
+      image: `https://spoonacular.com/recipeImages/${id}-556x370.jpg`,
+      sourceUrl: `https://spoonacular.com/${id}`,
+      summary: 'This is a mock external recipe from Spoonacular.',
+      instructions: 'Follow the instructions on the Spoonacular website.',
+    };
+
+    return mockRecipe;
+  },
+};
+
+// Helper function for paginating recipes
+const paginateRecipesResult = (recipes: any[], page: number, perPage: number = 6) => {
+  const startIndex = (page - 1) * perPage;
+  const endIndex = startIndex + perPage;
+  const paginatedRecipes = recipes.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(recipes.length / perPage);
+  
+  return {
+    recipes: paginatedRecipes,
+    totalPages,
+    currentPage: page
+  };
+};
+
+// Mock API for recipes
+export const mockAPI = {
+  search: async (query: string, diet?: string, intolerances?: string, token?: string, page: number = 1) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    let searchResults = recipes.filter(recipe =>
+      recipe.title.toLowerCase().includes(query.toLowerCase()) ||
+      recipe.ingredients.some(ingredient => ingredient.toLowerCase().includes(query.toLowerCase()))
+    );
+
+    if (diet) {
+      searchResults = searchResults.filter(recipe => recipe.tags.includes(diet.toLowerCase()));
+    }
+
+    if (intolerances) {
+      searchResults = searchResults.filter(recipe => !recipe.tags.includes(intolerances.toLowerCase()));
+    }
+
+    return paginateRecipesResult(searchResults, page);
+  },
+
+  getById: async (id: number, token?: string) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const recipe = recipes.find(recipe => recipe.id === id.toString());
+    return recipe || null;
+  },
+
+  getRandom: async (tags?: string, token?: string) => {
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    let filteredRecipes = recipes;
+    if (tags) {
+      filteredRecipes = recipes.filter(recipe => recipe.tags.includes(tags.toLowerCase()));
+    }
+
+    if (filteredRecipes.length === 0) {
+      return [];
+    }
+
+    const randomRecipes = [];
+    for (let i = 0; i < 3; i++) {
+      const randomIndex = Math.floor(Math.random() * filteredRecipes.length);
+      randomRecipes.push(filteredRecipes[randomIndex]);
+    }
+
+    return randomRecipes;
+  },
+  
+  recipes: {
+    getAll: async (page: number = 1, token?: string) => {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const allRecipes = recipes;
+      return paginateRecipesResult(allRecipes, page);
+    },
+    
+    getByCategory: async (category: string, page: number = 1, token?: string) => {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const categoryRecipes = recipes.filter(recipe => 
+        recipe.category.toLowerCase() === category.toLowerCase() ||
+        recipe.tags.includes(category.toLowerCase())
+      );
+      
+      return paginateRecipesResult(categoryRecipes, page);
+    },
+  },
+};
+
+till 26/3,  22:51
