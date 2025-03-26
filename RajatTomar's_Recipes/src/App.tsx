@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,7 +16,8 @@ import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
 import UserPreferences from "./pages/UserPreferences";
 import ExternalRecipe from "./pages/ExternalRecipe";
-import Recipes from "./pages/Recipes"; // Import the new Recipes page
+import Recipes from "./pages/Recipes";
+import MealPlanning from "./pages/MealPlanning";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +40,7 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/preferences" element={<UserPreferences />} />
             <Route path="/external-recipe/:id" element={<ExternalRecipe />} />
+            <Route path="/meal-planning" element={<MealPlanning />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
@@ -49,4 +50,4 @@ const App = () => (
   </QueryClientProvider>
 );
 
-export default App;
+export default App
