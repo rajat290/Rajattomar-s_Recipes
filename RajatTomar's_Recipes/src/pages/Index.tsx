@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
@@ -7,6 +6,13 @@ import HeroSection from '@/components/HeroSection';
 import RecipeCard from '@/components/RecipeCard';
 import Newsletter from '@/components/Newsletter';
 import Footer from '@/components/Footer';
+import FeaturedRecipeOfTheDay from '@/components/FeaturedRecipeOfTheDay';
+import SeasonalCollection from '@/components/SeasonalCollection';
+import BlogPostsSection from '@/components/BlogPostsSection';
+import CookingTips from '@/components/CookingTips';
+import PopularTags from '@/components/PopularTags';
+import VideoSection from '@/components/VideoSection';
+import EventCountdown from '@/components/EventCountdown';
 import { recipes, categories } from '@/lib/data';
 
 const Index = () => {
@@ -30,6 +36,9 @@ const Index = () => {
       
       <main className="flex-grow page-transition">
         <HeroSection />
+        
+        {/* Featured Recipe of the Day */}
+        <FeaturedRecipeOfTheDay />
         
         {/* Featured Recipes Section */}
         <section className="py-16 px-4">
@@ -66,6 +75,12 @@ const Index = () => {
           </div>
         </section>
         
+        {/* Seasonal Recipe Collection */}
+        <SeasonalCollection />
+        
+        {/* Popular Tags & Trends */}
+        <PopularTags />
+        
         {/* Categories Section */}
         <section className="py-16 px-4 bg-food-beige">
           <div className="container mx-auto text-center mb-10">
@@ -91,6 +106,18 @@ const Index = () => {
             ))}
           </div>
         </section>
+        
+        {/* Cooking Tips Section */}
+        <CookingTips />
+        
+        {/* Video Demonstrations Section */}
+        <VideoSection />
+        
+        {/* Blog Posts Section */}
+        <BlogPostsSection />
+        
+        {/* Event Countdown */}
+        <EventCountdown />
         
         {/* About Section */}
         <section className="py-16 px-4">
