@@ -1,49 +1,71 @@
+
 import { useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
-import { removeFavoriteRecipe, removeSavedRecipe } from '@/services/preferences';
+import { 
+  removeFavoriteRecipe, 
+  removeSavedRecipe,
+  addFavoriteRecipe,
+  addSavedRecipe
+} from '@/services/preferences';
 
 export const useProfileActions = (userId: string) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const handleRemoveSaved = async (recipeId: number) => {
+  const handleToggleSaved = async (recipeId: number, isSaved: boolean) => {
     try {
-      await removeSavedRecipe(userId, recipeId);
+      if (isSaved) {
+        await removeSavedRecipe(userId, recipeId);
+        toast({
+          title: "Recipe removed",
+          description: "Recipe removed from saved recipes"
+        });
+      } else {
+        await addSavedRecipe(userId, recipeId);
+        toast({
+          title: "Recipe saved",
+          description: "Recipe added to saved recipes"
+        });
+      }
       // Invalidate userPreferences query to refresh the data
       queryClient.invalidateQueries({ queryKey: ['userPreferences', userId] });
-      toast({
-        title: "Recipe removed",
-        description: "Recipe removed from saved recipes"
-      });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Could not remove recipe from saved recipes",
+        description: "Could not update saved recipes",
         variant: "destructive"
       });
     }
   };
   
-  const handleRemoveFavorite = async (recipeId: number) => {
+  const handleToggleFavorite = async (recipeId: number, isFavorite: boolean) => {
     try {
-      await removeFavoriteRecipe(userId, recipeId);
+      if (isFavorite) {
+        await removeFavoriteRecipe(userId, recipeId);
+        toast({
+          title: "Recipe removed",
+          description: "Recipe removed from favorites"
+        });
+      } else {
+        await addFavoriteRecipe(userId, recipeId);
+        toast({
+          title: "Recipe favorited",
+          description: "Recipe added to favorites"
+        });
+      }
       // Invalidate userPreferences query to refresh the data
       queryClient.invalidateQueries({ queryKey: ['userPreferences', userId] });
-      toast({
-        title: "Recipe removed",
-        description: "Recipe removed from favorites"
-      });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Could not remove recipe from favorites",
+        description: "Could not update favorites",
         variant: "destructive"
       });
     }
   };
 
   return {
-    handleRemoveSaved,
-    handleRemoveFavorite
+    handleToggleSaved,
+    handleToggleFavorite
   };
 };
