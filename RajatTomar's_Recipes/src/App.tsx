@@ -18,6 +18,8 @@ import UserPreferences from "./pages/UserPreferences";
 import ExternalRecipe from "./pages/ExternalRecipe";
 import Recipes from "./pages/Recipes";
 import MealPlanning from "./pages/MealPlanning";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +43,8 @@ const App = () => (
             <Route path="/preferences" element={<UserPreferences />} />
             <Route path="/external-recipe/:id" element={<ExternalRecipe />} />
             <Route path="/meal-planning" element={<MealPlanning />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:id" element={<BlogPost />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
@@ -50,4 +54,4 @@ const App = () => (
   </QueryClientProvider>
 );
 
-export default App
+export default App;
